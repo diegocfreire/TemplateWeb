@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://java.sun.com/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+         metadata-complete="true" version="3.0">
+
+
+    <!-- Pertmite ter mais de uma aplicação usando spring no mesmo tomcat -->
+    <context-param>
+        <param-name>webAppRootKey</param-name>
+        <param-value>app.templateweb</param-value>
+    </context-param>
+
+
+    <!-- Converte tudo para UTF-8 -->
+    <!-- Deve sempre ficar em primeiro -->
+    <filter>
+        <filter-name>encodingFilter</filter-name>
+        <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+        <init-param>
+            <param-name>encoding</param-name>
+            <param-value>UTF-8</param-value>
+        </init-param>
+        <init-param>
+            <param-name>forceEncoding</param-name>
+            <param-value>true</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>encodingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+
+    <!-- @Inject private HttpServletRequest request; -->
+    <filter>
+        <filter-name>contextFilter</filter-name>
+        <filter-class>org.springframework.web.filter.RequestContextFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>contextFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+
+    <!-- The definition of the Root Spring Container shared by all Servlets	and Filters -->
+    <!-- Creates the Spring Container shared by all Servlets and Filters -->
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>/WEB-INF/spring/app-context.xml</param-value>
+    </context-param>
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+
+
+    <!-- Processes application requests -->
+    <servlet>
+        <servlet-name>appServlet</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>/WEB-INF/spring/web-context.xml</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>appServlet</servlet-name>
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>home</servlet-name>
+        <jsp-file>/home.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>home</servlet-name>
+        <url-pattern>/home</url-pattern>
+    </servlet-mapping>
+
+    <!-- Permite que o browser mande comandos DELETE e PUT -->
+    <filter>
+        <filter-name>hiddenHttpMethodFilter</filter-name>
+        <filter-class>org.springframework.web.filter.HiddenHttpMethodFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>hiddenHttpMethodFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+
+    <!-- Spring Security -->
+    <filter>
+        <filter-name>springSecurityFilterChain</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>springSecurityFilterChain</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <welcome-file-list>
+        <welcome-file>/index.jsp</welcome-file>
+    </welcome-file-list>
+
+    <session-config>
+        <session-timeout>60</session-timeout>
+    </session-config>
+
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>securedapp</web-resource-name>
+            <url-pattern>/*</url-pattern>
+        </web-resource-collection>
+        <user-data-constraint>
+
+            <!--
+                Crie a Key para o Tomcat:
+                    No terminal >>
+                        1 - cd %JAVA_HOME%/bin
+                        2 - keytool -genkey -alias tomcat -keyalg RSA
+                        3 - Siga as instruções e será criado um arquivo .keystore na sua pasta de usuário do windows!
+                        3 - vá no diretório do Tomcat/conf e altere o arquivo server.xml, deixando semelhante ao exemplo abaixo:
+
+                        <Connector SSLEnabled="true" acceptCount="100" clientAuth="false"
+                                    disableUploadTimeout="true" enableLookups="false" maxThreads="25"
+                                    port="8443" keystoreFile="CAMINHODOARQUIVO(.keystore)" keystorePass="vls021130"
+                                    protocol="org.apache.coyote.http11.Http11NioProtocol" scheme="https"
+                                    secure="true" sslProtocol="TLS" />
+
+                Obs.: Para não utilizar HTTPS, mude o trecho do código abaixo de "CONFIDENTIAL" para "NONE"
+            -->
+
+            <transport-guarantee>NONE</transport-guarantee>
+        </user-data-constraint>
+    </security-constraint>
+
+</web-app>

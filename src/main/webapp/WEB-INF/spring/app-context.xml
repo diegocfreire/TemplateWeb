@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:sec="http://www.springframework.org/schema/security"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
+
+
+    <!-- Annotations -->
+    <context:annotation-config />
+
+
+    <!-- AOP -->
+    <aop:aspectj-autoproxy />
+    <aop:config proxy-target-class="true" />
+
+
+    <!-- Pacotes -->
+    <context:component-scan base-package="br.com.dcf" />
+
+
+    <!--
+        ARQUIVOS DE CONFIG
+    -->
+    <bean id="placeholderConfig" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="locations">
+            <list>
+                <value>/WEB-INF/db.properties</value>
+            </list>
+        </property>
+    </bean>
+
+
+    <!-- Mensagens -->
+    <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+        <property name="basenames">
+            <list>
+                <value>myprops</value>
+            </list>
+        </property>
+    </bean>
+
+    <!-- Connection Pool MySQL -->
+    <bean id="dataSource" class="com.jolbox.bonecp.BoneCPDataSource" destroy-method="close">
+        <property name="driverClass" value="${mySql.driver}" />
+        <property name="jdbcUrl" value="${mySql.url}" />
+        <property name="username" value="${mySql.user}" />
+        <property name="password" value="${mySql.password}" />
+    </bean>
+
+    <!-- Connection Pool Postgres -->
+    <!--<bean id="dataSource" class="com.jolbox.bonecp.BoneCPDataSource" destroy-method="close">-->
+    <!--<property name="driverClass" value="${db.driver}" />-->
+    <!--<property name="jdbcUrl" value="${db.url}" />-->
+    <!--<property name="username" value="${db.user}" />-->
+    <!--<property name="password" value="${db.password}" />-->
+    <!--<property name="idleConnectionTestPeriodInMinutes" value="${db.idleConnectionTestPeriodInMinutes}" />-->
+    <!--<property name="idleMaxAgeInMinutes" value="${db.idleMaxAgeInMinutes}" />-->
+    <!--<property name="maxConnectionsPerPartition" value="${db.maxConnectionsPerPartition}" />-->
+    <!--<property name="minConnectionsPerPartition" value="${db.minConnectionsPerPartition}" />-->
+    <!--<property name="partitionCount" value="${db.partitionCount}" />-->
+    <!--<property name="acquireIncrement" value="${db.acquireIncrement}" />-->
+    <!--<property name="statementsCacheSize" value="${db.statementsCacheSize}" />-->
+    <!--<property name="releaseHelperThreads" value="${db.releaseHelperThreads}" />-->
+    <!--</bean>-->
+
+
+    <!-- Transaction -->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource" />
+    </bean>
+    <tx:annotation-driven transaction-manager="transactionManager" />
+
+
+    <!-- Jdbc -->
+    <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource" ref="dataSource" />
+    </bean>
+    <bean id="namedParamJdbcTemplate" class="org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate">
+        <constructor-arg name="classicJdbcTemplate" ref="jdbcTemplate"/>
+    </bean>
+
+
+    <!-- Spring Security -->
+    <sec:global-method-security pre-post-annotations="enabled" secured-annotations="enabled"/>
+    <sec:http pattern="/js/**" security="none"/>
+    <sec:http pattern="/resources/**" security="none"/>
+    <sec:http auto-config="false" use-expressions="true">
+
+        <!-- Login -->
+        <sec:form-login login-page="/"
+                        login-processing-url="/j_spring_security_check"
+                        default-target-url="/"
+                        username-parameter="j_username"
+                        password-parameter="j_password"
+                        always-use-default-target="false"
+                        authentication-failure-handler-ref="customAuthenticationFailureHandler"
+                        authentication-success-handler-ref="customLoginSuccessHandler"/>
+
+        <!-- Logout -->
+        <sec:logout logout-url="/logout"
+                    invalidate-session="true"
+                    delete-cookies="true"
+                    success-handler-ref="customLogoutSuccessHandler" />
+
+        <!--
+            Permissões - Todas as permissões cadastradas podem acessar a home.jsp,
+            pois lá que é feita a validação e o redirecionamento para o JavaScript adequado!!!
+        -->
+        <sec:intercept-url pattern="/home*/**" access="
+                    hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')
+        " />
+
+
+    </sec:http>
+
+    <sec:authentication-manager>
+        <sec:authentication-provider>
+            <sec:password-encoder hash="md5"/>
+            <sec:user-service>
+
+                <!-- Senha 123         (202cb962ac59075b964b07152d234b70) -->
+                <!-- TODO: Remover os usuarios de teste
+                           com a senha v14l0g1c4 (fd00bf37b933a782383cc20dad28e64f) com autoridade ROLE_VLS_ADMIN -->
+                <sec:user name="ADMIN" password="202cb962ac59075b964b07152d234b70" authorities="ROLE_ADMIN" />
+                <sec:user name="USER" password="202cb962ac59075b964b07152d234b70" authorities="ROLE_USER" />
+
+            </sec:user-service>
+        </sec:authentication-provider>
+
+        <!-- TODO: Demais usuários
+            users-by-username-query - Necessita de 3 fields (usuario, senha e ativo)
+            authorities-by-username-query - Necessita de 2 fields (usuario e acesso)
+        -->
+        <!--<sec:authentication-provider>-->
+        <!--<sec:password-encoder hash="md5" />-->
+        <!--<sec:jdbc-user-service data-source-ref="dataSource"-->
+        <!--users-by-username-query="SELECT nome, senha, ativo FROM usuario WHERE UPPER(nome)=upper(?)"-->
+        <!--authorities-by-username-query="SELECT nome, acesso FROM usuario WHERE UPPER(nome)=upper(?)" />-->
+        <!--</sec:authentication-provider>-->
+
+
+    </sec:authentication-manager>
+
+</beans>
