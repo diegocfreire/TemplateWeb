@@ -16,7 +16,6 @@
     </mvc:annotation-driven>
 
     <!-- Resources -->
-    <mvc:resources mapping="/js/**" location="/js/" />
-    <mvc:resources mapping="/resources/**" location="/resources/" />
+    <mvc:resources mapping="/static/**" location="/static/" />
 
 </beans>

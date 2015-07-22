@@ -124,8 +124,7 @@
             <sec:user-service>
 
                 <!-- Senha 123         (202cb962ac59075b964b07152d234b70) -->
-                <!-- TODO: Remover os usuarios de teste
-                           com a senha v14l0g1c4 (fd00bf37b933a782383cc20dad28e64f) com autoridade ROLE_VLS_ADMIN -->
+                <!-- TODO: Remover os usuarios de teste -->
                 <sec:user name="ADMIN" password="202cb962ac59075b964b07152d234b70" authorities="ROLE_ADMIN" />
                 <sec:user name="USER" password="202cb962ac59075b964b07152d234b70" authorities="ROLE_USER" />
 
