@@ -94,10 +94,10 @@
         <!-- Login -->
         <sec:form-login login-page="/"
                         login-processing-url="/j_spring_security_check"
-                        default-target-url="/"
                         username-parameter="j_username"
                         password-parameter="j_password"
-                        always-use-default-target="false"
+                        default-target-url="/home.jsp"
+                        always-use-default-target="true"
                         authentication-failure-handler-ref="customAuthenticationFailureHandler"
                         authentication-success-handler-ref="customLoginSuccessHandler"/>
 
@@ -125,8 +125,8 @@
 
                 <!-- Senha 123         (202cb962ac59075b964b07152d234b70) -->
                 <!-- TODO: Remover os usuarios de teste -->
-                <sec:user name="ADMIN" password="202cb962ac59075b964b07152d234b70" authorities="ROLE_ADMIN" />
-                <sec:user name="USER" password="202cb962ac59075b964b07152d234b70" authorities="ROLE_USER" />
+                <sec:user name="admin@gmail.com" password="202cb962ac59075b964b07152d234b70" authorities="ROLE_ADMIN" />
+                <sec:user name="user@gmail.com" password="202cb962ac59075b964b07152d234b70" authorities="ROLE_USER" />
 
             </sec:user-service>
         </sec:authentication-provider>

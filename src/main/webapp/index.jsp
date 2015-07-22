@@ -36,15 +36,18 @@
                 <a class="navbar-brand" href="#">Template Padrão Web</a>
             </div>
             <div id="navbar" class="navbar-collapse collapse">
-                <form class="navbar-form navbar-right">
+
+
+                <form class="navbar-form navbar-right" action="/j_spring_security_check" method="POST">
                     <div class="form-group">
-                        <input type="text" placeholder="Email" class="form-control">
+                        <input type="text" name="j_username" placeholder="Email" class="form-control">
                     </div>
                     <div class="form-group">
-                        <input type="password" placeholder="Senha" class="form-control">
+                        <input type="password" name="j_password" placeholder="Senha" class="form-control">
                     </div>
                     <button type="submit" class="btn btn-success">Entrar</button>
                 </form>
+
             </div><!--/.navbar-collapse -->
         </div>
     </nav>
