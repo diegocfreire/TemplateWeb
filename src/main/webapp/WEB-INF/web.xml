@@ -69,12 +69,12 @@
         <url-pattern>/</url-pattern>
     </servlet-mapping>
     <servlet>
-        <servlet-name>home</servlet-name>
-        <jsp-file>/home.jsp</jsp-file>
+        <servlet-name>login</servlet-name>
+        <jsp-file>/login.jsp</jsp-file>
     </servlet>
     <servlet-mapping>
-        <servlet-name>home</servlet-name>
-        <url-pattern>/home</url-pattern>
+        <servlet-name>login</servlet-name>
+        <url-pattern>/login</url-pattern>
     </servlet-mapping>
 
     <!-- Permite que o browser mande comandos DELETE e PUT -->
