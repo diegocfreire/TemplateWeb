@@ -123,11 +123,11 @@
 
                         <Connector SSLEnabled="true" acceptCount="100" clientAuth="false"
                                     disableUploadTimeout="true" enableLookups="false" maxThreads="25"
-                                    port="8443" keystoreFile="CAMINHODOARQUIVO(.keystore)" keystorePass="vls021130"
+                                    port="8443" keystoreFile="CAMINHODOARQUIVO(.keystore)" keystorePass="senha_informada_na_criacao"
                                     protocol="org.apache.coyote.http11.Http11NioProtocol" scheme="https"
                                     secure="true" sslProtocol="TLS" />
 
-                Obs.: Para não utilizar HTTPS, mude o trecho do código abaixo de "CONFIDENTIAL" para "NONE"
+                Obs.: Para utilizar HTTPS, mude o trecho do código abaixo de "NONE" para "CONFIDENTIAL"
             -->
 
             <transport-guarantee>NONE</transport-guarantee>
